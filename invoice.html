@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice - CHIGO STORE</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #e7f3fe;
+            color: #333;
+        }
+        header {
+            background-color: #000000;
+            color: white;
+            text-align: center;
+            padding: 1em 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .invoice-details {
+            margin-bottom: 20px;
+        }
+        .invoice-details label {
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .total {
+            text-align: right;
+            font-weight: bold;
+        }
+        footer {
+            background-color: #000000;
+            color: white;
+            text-align: center;
+            padding: 1em 0;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+            margin-top: 40px;
+        }
+        .total-row {
+            font-weight: bold;
+        }
+        .button-container {
+            text-align: right; /* Menyelaraskan tombol ke kanan */
+            margin-top: 20px; /* Jarak atas untuk tombol */
+        }
+        .button-container button {
+            padding: 10px 20px;
+            background-color: #1e90ff; /* Warna latar belakang tombol */
+            color: white; /* Warna teks tombol */
+            border: none; /* Menghilangkan border */
+            border-radius: 5px; /* Sudut melengkung */
+            cursor: pointer; /* Menunjukkan bahwa tombol dapat diklik */
+            font-size: 16px; /* Ukuran font tombol */
+        }
+        .button-container button:hover {
+            background-color: #007acc; /* Warna latar belakang saat hover */
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Invoice Pembelian</h1>
+</header>
+
+<div class="container">
+    <div class="invoice-details">
+        <label>Tanggal Pembelian:</label>
+        <p id="dateTime"></p>
+
+        <label>Nama Pembeli:</label>
+        <p id="namaPembeli"></p>
+
+        <label>Nomor Telepon:</label>
+        <p id="noHpPembeli"></p>
+
+        <label>Alamat Pengiriman:</label>
+        <p id="alamatPengiriman"></p>
+
+        <label>Metode Pembayaran:</label>
+        <p id="metodePembayaran"></p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Produk</th>
+                <th>Jumlah</th>
+                <th>Harga Satuan</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody id="invoiceItems"></tbody>
+    </table>
+
+    <div class="invoice-details">
+        <table>
+            <tr class="total-row">
+                <td colspan="3" style="text-align: right;">Total Harga:</td>
+                <td id="totalHarga" class="total"></td>
+            </tr>
+        </table>
+    </div>
+
+    <h2>Terima kasih telah berbelanja di CHIGO STORE!</h2>
+    <p>Silakan simpan struk ini sebagai bukti pembelian Anda.</p>
+
+    <div class="button-container">
+        <button onclick="window.location.href='transaksi.html'">Lakukan Pembelian Lain</button>
+    </div>
+</div>
+
+<footer>
+    <p>2025 CHIGO STORE</p>
+</footer>
+
+<script>
+    // Mengambil data dari localStorage
+    const dateTime = localStorage.getItem('dateTime');
+    const nama = localStorage.getItem('nama');
+    const noHp = localStorage.getItem('noHp');
+    const produk = JSON.parse(localStorage.getItem('produk'));
+    const jumlah = JSON.parse(localStorage.getItem('jumlah'));
+    const harga = JSON.parse(localStorage.getItem('harga'));
+    const metodePembayaran = localStorage.getItem('metodePembayaran');
+    const alamat = localStorage.getItem('alamat');
+
+    // Menampilkan data pada halaman
+    document.getElementById('dateTime').innerText = dateTime;
+    document.getElementById('namaPembeli').innerText = nama;
+    document.getElementById('noHpPembeli').innerText = noHp;
+    document.getElementById('metodePembayaran').innerText = metodePembayaran;
+    document.getElementById('alamatPengiriman').innerText = alamat;
+
+    const invoiceItems = document.getElementById('invoiceItems');
+    let total = 0;
+
+    produk.forEach((item, index) => {
+        const row = document.createElement('tr');
+
+        const produkCell = document.createElement('td');
+        produkCell.innerText = item;
+        row.appendChild(produkCell);
+
+        const jumlahCell = document.createElement('td');
+        jumlahCell.innerText = jumlah[index] + " pcs";
+        row.appendChild(jumlahCell);
+
+        const hargaCell = document.createElement('td');
+        hargaCell.innerText = "Rp " + harga[index].toLocaleString("id-ID");
+        row.appendChild(hargaCell);
+
+        const totalCell = document.createElement('td');
+        const itemTotal = harga[index] * jumlah[index];
+        totalCell.innerText = "Rp " + itemTotal.toLocaleString("id-ID");
+        row.appendChild(totalCell);
+
+        invoiceItems.appendChild(row);
+        total += itemTotal; // Menghitung total harga
+    });
+
+    document.getElementById('totalHarga').innerText = "Rp " + total.toLocaleString("id-ID");
+
+    // Menghapus data dari localStorage setelah ditampilkan (opsional)
+    // localStorage.removeItem('nama');
+    // localStorage.removeItem('noHp');
+    // localStorage.removeItem('produk');
+    // localStorage.removeItem('jumlah');
+    // localStorage.removeItem('harga');
+    // localStorage.removeItem('metodePembayaran');
+    // localStorage.removeItem('alamat');
+    // localStorage.removeItem('dateTime');
+</script>
+
+</body>
+</html>
